@@ -4,11 +4,15 @@ var express = require('express');
 var teamController = require('../controllers/team.controller');
 var mdAuth = require('../middlewares/authenticated');
 var connectMultiparty = require('connect-multiparty');
-const upload = connectMultiparty({uploadDir: './uploads/user'})
+const upload = connectMultiparty({uploadDir: './uploads/team'})
 
 var api = express.Router();
 
 api.post('/saveTeam/:idU', [mdAuth.ensureAuth, mdAuth.ensureAuthAdmin], teamController.createTeam);
 api.put('/:idE/setPlayer/:idU', [mdAuth.ensureAuth, mdAuth.ensureAuthCaptain], teamController.setPlayer);
+
+//Image
+api.put('/:id/teamImage/:idT', [mdAuth.ensureAuth,mdAuth.ensureAuthCaptain,upload], teamController.uploadTeamImage)
+api.get('/getImageT/:fileName', [upload], teamController.getImage);
 
 module.exports = api;

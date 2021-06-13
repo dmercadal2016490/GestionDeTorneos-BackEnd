@@ -169,11 +169,11 @@ function updateUser(req,res){
     if(userId != req.user.sub){
         res.status(403).send({message: 'No tienes permisos para actualizar otro usuario'});
     }else{
-        if(update.password || update.role){
+        if(data.password || data.role){
             res.status(403).send({message: 'No es posible actualizar contraseña o role del usuario'}); 
         }else{
-            if(update.username){
-                User.findOne({username: update.username.toLowerCase()}, (err,userFind)=>{
+            if(data.username){
+                User.findOne({username: data.username.toLowerCase()}, (err,userFind)=>{
                     if(err){
                         res.status(500).send({message: 'Error general'})
                         console.log(err)
