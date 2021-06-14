@@ -65,6 +65,9 @@ function setPlayer(req,res){
                         res.status(500).send({message: 'Error general al buscar el equipo'});
                         console.log(err);
                     }else if(teamFind){
+                        if(teamFind.playerCount >= 10){
+                            res.send({message:'No se pueden tener mas de diez jugadores'})
+                        }else{  
                         var team = teamFind.playerCount ++;
                         let jugador = userFind;
                         
@@ -87,6 +90,7 @@ function setPlayer(req,res){
                                 res.send({message:'No se salvo el jugador'})
                             }
                         })
+                        }
                     }else{
                         res.status(404).send({message: 'El equipo que buscas no existe'})
                     }
