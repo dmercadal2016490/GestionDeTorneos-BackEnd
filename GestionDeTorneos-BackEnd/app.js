@@ -4,6 +4,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var userRoutes = require('./routes/user.routes');
 var teamRoutes = require('./routes/team.routes')
+var ligaRoutes = require('./routes/liga.routes')
 var cors = require('cors');
 
 var app = express();
@@ -22,6 +23,7 @@ app.use(cors());
 
 app.use('/api', userRoutes);
 app.use('/api', teamRoutes);
+app.use('/api', ligaRoutes);
 
 
 module.exports = app;
