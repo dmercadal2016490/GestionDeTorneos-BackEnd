@@ -25,8 +25,12 @@ function createTeam(req,res){
                 }else{
                     team.name = params.name;
                     team.country = params.country;
+                    team.golesFavor = 0;
+                    team.golesContra = 0;
+                    team.golesDiferencia = 0;
+                    team.partidos = 0;
                     team.playerCount = 0;
-
+                    team.puntos = 0;
                     team.save((err, teamSaved)=>{
                         if(err){
                             res.status(500).send({message: 'Error general al salvar el equipo'});
