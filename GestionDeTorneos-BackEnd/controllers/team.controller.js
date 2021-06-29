@@ -165,9 +165,23 @@ function getImage(req,res){
     })
 }
 
+function getTeams(req,res){
+    Team.find({$query: {}, $orderby: {puntos: 1}}).exec((err, users)=>{
+        if(err){
+            res.status(500).send({message: 'Error general al buscar usuarios'});
+            console.log(err);
+        }else if(users){
+            res.send({message: 'Usuarios encontrados: ', users})
+        }else{
+            res.send({message: 'No existe ningun usuario'})
+        }
+    })
+}
+
 module.exports ={
     createTeam,
     setPlayer,
     uploadTeamImage,
-    getImage
+    getImage,
+    getTeams
 }

@@ -10,6 +10,7 @@ var api = express.Router();
 
 api.post('/saveTeam/:idU', [mdAuth.ensureAuth, mdAuth.ensureAuthAdmin], teamController.createTeam);
 api.put('/:idE/setPlayer/:idU', [mdAuth.ensureAuth, mdAuth.ensureAuthCaptain], teamController.setPlayer);
+api.get('/getTeams', teamController.getTeams);
 
 //Image
 api.put('/:id/teamImage/:idT', [mdAuth.ensureAuth,mdAuth.ensureAuthCaptain,upload], teamController.uploadTeamImage)
