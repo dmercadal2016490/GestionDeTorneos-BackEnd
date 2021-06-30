@@ -4,6 +4,7 @@ var Liga = require('../models/liga.model')
 var Team = require('../models/team.model')
 var fs = require('fs');
 var path = require('path');
+const { exec } = require('child_process');
 
 function createLiga(req, res){
     var liga = new Liga();
@@ -83,7 +84,27 @@ function addTeams(req, res){
     })
 }
 
+function getTeams(req, res){
+    var ligaId = req.params.id;
+
+    Liga.findById(ligaId).populate({
+        path: 'teams',
+        populate:{
+            path: 'liga',
+        }
+    }).exec((err, teams)=>{
+        if(err){
+            res.status(500).send({message: 'Error al buscar Equipos'})
+        }else if(teams){
+            res.status(200).send({message: 'Equipos de la Liga', teams})
+        }else{
+            return res.status(404).send({message: 'No hay registros de equipos'})
+        }
+    })
+}
+
 module.exports = {
     createLiga,
-    addTeams
+    addTeams,
+    getTeams,
 }
