@@ -2,6 +2,7 @@
 
 var Team = require('../models/team.model');
 var User = require('../models/user.model')
+var Liga = require('../models/liga.model')
 var bcrypt = require('bcrypt-nodejs');
 var jwt = require('../services/jwt');
 var fs = require('fs');
@@ -9,53 +10,82 @@ var path = require('path');
 
 function createTeam(req,res){
     var team = new Team();
+    var ligaId = req.params.idL;
     var params = req.body;
     var userId = req.params.idU;
 
     if (userId != req.user.sub){
         res.status(500).send({message: 'No tienes permiso para agregar a un equipo'})
     }else{
-        if(params.name && params.country){
-            Team.findOne({name: params.name}, (err,teamFind)=>{
-                if(err){
-                    res.status(500).send({message: 'Error general'})
-                    console.log(err)
-                }else if(teamFind){
-                    res.send({message: 'Nombre de equipo ya en uso'})
+        Liga.findById(ligaId, (err, ligaFind)=>{
+            if(err){
+                return res.status(500).send({message: 'Error general'})
+            }else if(ligaFind){
+                if(ligaFind.teamCount > 10){
+                    res.send({message: 'No puedes agregar más de 10 equipos a una liga'})
                 }else{
-                    team.name = params.name;
-                    team.country = params.country;
-                    team.golesFavor = 0;
-                    team.golesContra = 0;
-                    team.golesDiferencia = 0;
-                    team.partidos = 0;
-                    team.playerCount = 0;
-                    team.puntos = 0;
-                    team.save((err, teamSaved)=>{
-                        if(err){
-                            res.status(500).send({message: 'Error general al salvar el equipo'});
-                            console.log(err);
-                        }else if(teamSaved){
-                            res.send({message: 'Equipo guardado: ', teamSaved})
-                        }else{
-                            res.send({message: 'No se guado el equipo'});
-                        }
-                    })
+                    if(params.name && params.country){
+                        Team.findOne({name: params.name}, (err,teamFind)=>{
+                            if(err){
+                                res.status(500).send({message: 'Error general'})
+                                console.log(err)
+                            }else if(teamFind){
+                                res.send({message: 'Nombre de equipo ya en uso'})
+                            }else{
+                                team.name = params.name;
+                                team.country = params.country;
+                                team.golesFavor = 0;
+                                team.golesContra = 0;
+                                team.golesDiferencia = 0;
+                                team.partidos = 0;
+                                team.playerCount = 0;
+                                team.puntos = 0;
+                                team.save((err, teamSaved)=>{
+                                    if(err){
+                                        res.status(500).send({message: 'Error general al salvar el equipo'});
+                                        console.log(err);
+                                    }else if(teamSaved){
+                                        Liga.findByIdAndUpdate(ligaId, {$push:{teams: teamSaved._id}}, {new: true}, (err, teamPush)=>{
+                                            if(err){
+                                                return res.status(500).send({message: 'Error general'})
+                                            }else if(teamPush){
+                                                Liga.findByIdAndUpdate(ligaId, {$inc:{teamCount: +1}}, {new:true}, (err, aumento)=>{
+                                                    if(err){
+                                                        res.send({message: 'Error al incrementar'})
+                                                    }else if(aumento){
+                                                        res.send({message: 'Equipo agregado', aumento})
+                                                    }else{
+                                                        res.send({message:'No se incremento'})
+                                                    }
+                                                })
+                                            }else{
+                                                return res.send({message: 'No se agregó el equipo'})
+                                            }
+                                        })
+                                    }else{
+                                        res.send({message: 'No se guado el equipo'});
+                                    }
+                                })
+                            }
+                        })
+                    }else{
+                        res.send({message: 'Porfavor ingresa nombre y pais del equipo'})
+                    }
                 }
-            })
-        }else{
-            res.send({message: 'Porfavor ingresa nombre y pais del equipo'})
-        }
+            }else{
+                return res.status(404).send({message: 'La liga a la que intentas agregar un equipo no existe'})
+            }
+        })
     }
 }
 
 function setPlayer(req,res){
-    var CaptainId = req.params.idU;
+    var userId = req.params.idU;
     var teamId = req.params.idE
     var params = req.body;
     var team = new Team();
 
-    if (CaptainId != req.user.sub){
+    if (userId != req.user.sub){
         res.status(500).send({message: 'No tienes permiso para agregar jugadores a un equipo'})
     }else{
         let player = params._id

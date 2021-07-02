@@ -8,7 +8,7 @@ const upload = connectMultiparty({uploadDir: './uploads/team'})
 
 var api = express.Router();
 
-api.post('/saveTeam/:idU', [mdAuth.ensureAuth, mdAuth.ensureAuthAdmin], teamController.createTeam);
+api.post('/:idL/saveTeam/:idU', [mdAuth.ensureAuth], teamController.createTeam);
 api.put('/:idE/setPlayer/:idU', [mdAuth.ensureAuth, mdAuth.ensureAuthCaptain], teamController.setPlayer);
 api.get('/getTeams', teamController.getTeams);
 

@@ -37,7 +37,7 @@ function createLiga(req, res){
     }
 }
 
-function addTeams(req, res){
+/*function addTeams(req, res){
     var ligaId = req.params.id
     var params = req.body
     let team = params._id
@@ -82,7 +82,7 @@ function addTeams(req, res){
             res.status(404).send({message: 'Team no encontrado'})
         }
     })
-}
+}*/
 
 function getTeams(req, res){
     var ligaId = req.params.id;
@@ -105,6 +105,5 @@ function getTeams(req, res){
 
 module.exports = {
     createLiga,
-    addTeams,
     getTeams,
 }
