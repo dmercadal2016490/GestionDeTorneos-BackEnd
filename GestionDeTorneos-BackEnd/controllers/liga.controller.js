@@ -2,6 +2,7 @@
 
 var Liga = require('../models/liga.model')
 var Team = require('../models/team.model')
+var User = require('../models/user.model')
 var fs = require('fs');
 var path = require('path');
 const { exec } = require('child_process');
@@ -9,31 +10,52 @@ const { exec } = require('child_process');
 function createLiga(req, res){
     var liga = new Liga();
     var params = req.body;
+    var userId = req.params.idU
 
-    if(params.name && params.descripcion){
-        Liga.findOne({name: params.name}, (err, ligaFind)=>{
+    if(userId != req.user.sub){
+        return res.send({message: 'No tienes permiso para agregar una liga'})
+    }else{
+        User.findById(userId, (err, userFind)=>{
             if(err){
-                res.status(500).send({message: "Error general"})
-            }else if(ligaFind){
-                res.send({message: "Nombre de liga ya en uso"})
+                return res.status(500).send({message: 'Error general'})
+            }else if(userFind){
+                if(params.name && params.descripcion){
+                    Liga.findOne({name: params.name}, (err, ligaFind)=>{
+                        if(err){
+                            res.status(500).send({message: "Error general"})
+                        }else if(ligaFind){
+                            res.send({message: "Nombre de liga ya en uso"})
+                        }else{
+                            liga.name = params.name;
+                            liga.descripcion = params.descripcion;
+                            liga.teamCount = 0;
+            
+                            liga.save((err, ligaSaved)=>{
+                                if(err){
+                                    res.status(500).send({message: 'Error general'})
+                                }else if(ligaSaved){
+                                    User.findByIdAndUpdate(userId, {$push:{ligas: ligaSaved._id}}, {new: true}, (err, ligaPush)=>{
+                                        if(err){
+                                            return res.status(500).send({message: 'Error general'})
+                                        }else if(ligaPush){
+                                            return res.send({message: 'Liga agregada con éxito!', ligaPush})
+                                        }else{
+                                            return res.send({message: 'No se agregó la liga'})
+                                        }
+                                    })
+                                }else{
+                                    res.send({message: 'No se guado el equipo'});
+                                }
+                            })
+                        }
+                    })
+                }else{
+                    res.send({message: "Ingresa todos los datos obligatorios"})
+                }
             }else{
-                liga.name = params.name;
-                liga.descripcion = params.descripcion;
-                liga.teamCount = 0;
 
-                liga.save((err, ligaSaved)=>{
-                    if(err){
-                        res.status(500).send({message: 'Error general'})
-                    }else if(ligaSaved){
-                        res.send({message: "Liga agregada", ligaSaved})
-                    }else{
-                        res.send({message: 'No se guado el equipo'});
-                    }
-                })
             }
         })
-    }else{
-        res.send({message: "Ingresa todos los datos obligatorios"})
     }
 }
 
