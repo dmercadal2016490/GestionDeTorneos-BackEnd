@@ -21,7 +21,7 @@ function createTeam(req,res){
             if(err){
                 return res.status(500).send({message: 'Error general'})
             }else if(ligaFind){
-                if(ligaFind.teamCount > 10){
+                if(ligaFind.teamCount >= 10){
                     res.send({message: 'No puedes agregar más de 10 equipos a una liga'})
                 }else{
                     if(params.name && params.country){
