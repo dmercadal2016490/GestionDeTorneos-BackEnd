@@ -296,12 +296,13 @@ function getImage(req,res){
 }
 
 function getTeams(req,res){
-    Team.find({$query: {}, $orderby: {puntos: 1}}).exec((err, users)=>{
+    var ligaId = req.params.id;
+    Liga.findById(ligaId).populate({path:'teams', populate:{path:'liga'}}).sort({puntos: -1}).exec((err, ligaTeams)=>{
         if(err){
             res.status(500).send({message: 'Error general al buscar usuarios'});
-            console.log(err);
-        }else if(users){
-            res.send({message: 'Usuarios encontrados: ', users})
+            console.log(ligaTeams);
+        }else if(teams){
+            res.send({message: 'Usuarios encontrados: ', ligaTeams})
         }else{
             res.send({message: 'No existe ningun usuario'})
         }
