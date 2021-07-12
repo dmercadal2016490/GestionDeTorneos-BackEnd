@@ -14,7 +14,7 @@ api.put('/:idU/updateTeam/:idL/:idT', [mdAuth.ensureAuth], teamController.update
 api.put('/:idU/deleteTeam/:idL/:idT', [mdAuth.ensureAuth], teamController.deleteTeam)
 
 //Image
-api.put('/:id/teamImage/:idT', [mdAuth.ensureAuth,mdAuth.ensureAuthCaptain,upload], teamController.uploadTeamImage)
+api.put('/:id/teamImage/:idT', [mdAuth.ensureAuth,upload], teamController.uploadTeamImage)
 api.get('/getImageT/:fileName', [upload], teamController.getImage);
 
 module.exports = api;

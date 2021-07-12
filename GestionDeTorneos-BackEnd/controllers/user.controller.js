@@ -61,7 +61,7 @@ function login(req, res){
                             return res.send({ message: 'Usuario logeado'});
                         }
                     }else{
-                        return res.status(401).send({message: 'Contrasea incorrecta'});
+                        return res.status(401).send({message: 'Contraseña incorrecta'});
                     }
                 })
             }else{
