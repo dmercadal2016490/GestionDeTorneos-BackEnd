@@ -61,7 +61,7 @@ function createTeam(req,res){
                                             }else{
                                                 return res.send({message: 'No se agregó el equipo'})
                                             }
-                                        })
+                                        }).populate('teams')
                                     }else{
                                         res.send({message: 'No se guado el equipo'});
                                     }

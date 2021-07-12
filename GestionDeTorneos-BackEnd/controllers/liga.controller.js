@@ -41,7 +41,7 @@ function createLiga(req, res){
                                         }else{
                                             return res.send({message: 'No se agregó la liga'})
                                         }
-                                    })
+                                    }).populate('ligas')
                                 }else{
                                     res.send({message: 'No se guado el equipo'});
                                 }
@@ -93,7 +93,7 @@ function updateLiga(req, res){
                                                     }else{
                                                         return res.send({message: 'Liga no actualizada'})
                                                     }
-                                                })
+                                                }).populate('ligas')
                                         }else{
                                             return res.status(404).send({message: 'Usuario no encontrado'})
                                         }
@@ -142,23 +142,29 @@ function deleteLiga(req, res){
     }
 }
 
-function getTeams(req, res){
-    var ligaId = req.params.id;
+function verTeams(req, res){
+    var ligaId = req.params.idL;
+    var userId = req.params.idU;
 
-    Liga.findById(ligaId).populate({
-        path: 'teams',
-        populate:{
-            path: 'liga',
-        }
-    }).exec((err, teams)=>{
-        if(err){
-            res.status(500).send({message: 'Error al buscar Equipos'})
-        }else if(teams){
-            res.status(200).send({message: 'Equipos de la Liga', teams})
-        }else{
-            return res.status(404).send({message: 'No hay registros de equipos'})
-        }
-    })
+    if(userId != req.user.sub){
+        res.status(403).send({message: 'No tienes permiso para realizar esta accion'})
+    }else{
+        Liga.findById(ligaId).populate({
+            path: 'teams',
+            populate:{
+                path: 'liga',
+            }
+        }).exec((err, teams)=>{
+            if(err){
+                res.status(500).send({message: 'Error al buscar Equipos'})
+            }else if(teams){
+                res.status(200).send({message: 'Equipos de la Liga', teams})
+            }else{
+                return res.status(404).send({message: 'No hay registros de equipos'})
+            }
+        })
+    }
+
 }
 
 function uploadLigaImage(req, res){
@@ -220,7 +226,7 @@ function getImageLiga(req, res){
 
 module.exports = {
     createLiga,
-    getTeams,
+    verTeams,
     updateLiga,
     deleteLiga,
     uploadLigaImage,

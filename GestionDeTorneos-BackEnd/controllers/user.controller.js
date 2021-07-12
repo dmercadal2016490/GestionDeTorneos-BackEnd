@@ -1,6 +1,7 @@
 'use strict'
 
 var User = require('../models/user.model');
+var Liga = require('../models/liga.model')
 var bcrypt = require('bcrypt-nodejs');
 var jwt = require('../services/jwt');
 var fs = require('fs');
@@ -54,7 +55,7 @@ function login(req, res){
                         return res.status(500).send({message: 'Error general en la verificación de la contraseña'});
                     }else if(checkPassword){
                         if(params.gettoken){
-			    delete userFind.password
+			                 delete userFind.password
                             return res.send({ token: jwt.createToken(userFind), user: userFind});
                         }else{
                             return res.send({ message: 'Usuario logeado'});
@@ -66,7 +67,7 @@ function login(req, res){
             }else{
                 return res.send({message: 'Username incorrecto'});
             }
-        })
+        }).populate('ligas');
     }else{
         return res.status(401).send({message: 'Por favor ingresa los datos obligatorios'});
     }
@@ -329,6 +330,25 @@ function getUsers(req,res){
     })
 }
 
+function getLigas(req, res){
+    var userId = req.params.id;
+
+    User.findById(userId).populate({
+        path: 'ligas',
+        populate:{
+            path: 'user',
+        }
+    }).exec((err, ligas)=>{
+        if(err){
+            res.status(500).send({message: 'Error al buscar ligas'})
+        }else if(ligas){
+            res.status(200).send({message: 'Ligas encontradas', ligas})
+        }else{
+            return res.status(404).send({message: 'No hay registros de ligas'})
+        }
+    })
+}
+
 
 module.exports = {
     createInit,
@@ -339,5 +359,6 @@ module.exports = {
     deleteUser,
     uploadImage,
     getImage,
-    getUsers
+    getUsers,
+    getLigas
 }

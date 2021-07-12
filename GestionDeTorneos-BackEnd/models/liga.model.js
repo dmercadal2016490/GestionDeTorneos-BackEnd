@@ -6,7 +6,6 @@ var Schema = mongoose.Schema;
 var ligaSchema = Schema({
     name: String,
     descripcion:String,
-    image:String,
     teamCount:Number,
     ligaImg:String,
     teams: [{type: Schema.ObjectId, ref:'team'}],
