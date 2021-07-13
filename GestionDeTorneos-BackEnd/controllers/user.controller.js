@@ -349,6 +349,37 @@ function getLigas(req, res){
     })
 }
 
+function adminDeleteUser(req,res){
+    let userId = req.params.idU;
+
+    User.findByIdAndRemove(userId, (err,userRemoved)=>{
+        if(err){
+            res.status(500).send({message: 'Error general al eliminar el usuario'});
+            console.log(err);
+        }if(userRemoved){
+            res.send({message: 'Usuario eliminado', userRemoved})
+        }else{
+            res.send({message: 'Usuario no eliminado'});
+        }
+    })
+}
+
+function adminUpdateUser(req,res){
+    let data = req.body;
+    let userId = req.params.idU;
+
+    User.findByIdAndUpdate(userId, data, {new:true}, (err, userUpdated)=>{
+        if(err){
+            res.status(500).send({message: 'Error general al actualizar'});
+            console.log(err);
+        }else if(userUpdated){
+            res.send({message: 'Usuario actualizado', userUpdated});
+        }else{
+            res.send({message: 'No se actualizo el usuario'});
+        }
+    })
+}
+
 
 module.exports = {
     createInit,
@@ -360,5 +391,7 @@ module.exports = {
     uploadImage,
     getImage,
     getUsers,
-    getLigas
+    getLigas,
+    adminDeleteUser,
+    adminUpdateUser
 }

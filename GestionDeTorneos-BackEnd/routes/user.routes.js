@@ -22,4 +22,8 @@ api.get('/getLigas/:id', [mdAuth.ensureAuth], userController.getLigas)
 api.put('/:id/uploadImage', [mdAuth.ensureAuth, upload], userController.uploadImage);
 api.get('/getImage/:fileName', [upload], userController.getImage);
 
+//admin
+api.put('/adminDeleteUser', userController.adminDeleteUser);
+api.put('/adminUpdateUser', userController.adminUpdateUser);
+
 module.exports = api;
