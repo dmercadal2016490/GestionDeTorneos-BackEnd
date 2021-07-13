@@ -45,23 +45,26 @@ var jwt = require('../services/jwt');
 function setMarcador(req, res){
     var marcador = new Marcador();
     var params = req.body;
-    var Equipo1 = req.params.e1;
-    var Equipo2 = req.params.e2;
+    /*var Equipo1 = req.params.e1;
+    var Equipo2 = req.params.e2;*/
     var LigaTeam = req.params.liga;
 
-    Team.findById(Equipo1, (err, teamFind)=>{
+    Team.findById(params.equipo1, (err, teamFind)=>{
         if(err){
-            res.status(500).send({message: 'Error'})
+            res.status(500).send({message: 'Error al encontrar al  equipo 1'})
         }else if(teamFind){
-            Team.findById(Equipo2, (err, teamFind2)=>{
+            Team.findById(params.equipo2, (err, teamFind2)=>{
                 if(err){
-                    res.status(500).send({message: 'Error'})
+                    res.status(500).send({message: 'Error al encontrar al equipo2'})
                 }else if(teamFind2){
                     if(params.jornada && params.goles1 && params.goles2){
                         if(params.goles1 < 0 || params.goles2 < 0 || params.jornada <= 0 || params.jornada > 9){
-                            res.status(500).send({message: 'Ingrese datos mayores o iguales a 0'})
+                            res.status(500).send({message: 'Ingrese datos mayores o iguales a 0. Jornadas no deben ser mayores a 9'})
                         } else{
-                        Liga.findById(LigaTeam, (err, ligaFind)=>{
+                            Liga.findById(LigaTeam, (err, ligaFind)=>{
+                            if(params.equipo1 = params.equipo2){
+                            res.status(500).send({message: 'Los dos equipos no pueden ser iguales.'})
+                            }else{
                             if(err){
                                 return res.status(500).send({message: 'Error general'})
                             }else if(ligaFind){
@@ -74,8 +77,8 @@ function setMarcador(req, res){
                                     marcador.jornada = params.jornada;
                                     marcador.goles1 = params.goles1;
                                     marcador.goles2 = params.goles2;
-                                    marcador.equipo1 = Equipo1;
-                                    marcador.equipo2 = Equipo2;
+                                    marcador.equipo1 = params.equipo1;
+                                    marcador.equipo2 = params.equipo2;
                             
                                     var diferencia1 = marcador.goles1 - marcador.goles2;
                                     var diferencia2 = marcador.goles2 - marcador.goles1;
@@ -97,34 +100,34 @@ function setMarcador(req, res){
                                         if(err){
                                             res.status(500).send({message: 'Error general'})
                                         }else if(marcadorSaved){
-                                            Team.findByIdAndUpdate(Equipo1, {$inc: {golesFavor: marcador.goles1}}, {new: true}, (err, aumento)=>{
+                                            Team.findByIdAndUpdate(params.equipo1, {$inc: {golesFavor: marcador.goles1}}, {new: true}, (err, aumento)=>{
                                             })
                             
-                                            Team.findByIdAndUpdate(Equipo1, {$inc: {golesContra: marcador.goles2}}, {new: true}, (err, aumento)=>{
+                                            Team.findByIdAndUpdate(params.equipo1, {$inc: {golesContra: marcador.goles2}}, {new: true}, (err, aumento)=>{
                                             })
                             
-                                            Team.findByIdAndUpdate(Equipo2, {$inc: {golesFavor: marcador.goles2}}, {new: true}, (err, aumento)=>{
+                                            Team.findByIdAndUpdate(params.equipo2, {$inc: {golesFavor: marcador.goles2}}, {new: true}, (err, aumento)=>{
                                             })
                             
-                                            Team.findByIdAndUpdate(Equipo2, {$inc: {golesContra: marcador.goles1}}, {new: true}, (err, aumento)=>{
+                                            Team.findByIdAndUpdate(params.equipo2, {$inc: {golesContra: marcador.goles1}}, {new: true}, (err, aumento)=>{
                                             })
                             
-                                            Team.findByIdAndUpdate(Equipo1, {$inc: {partidos: 1}}, {new: true}, (err, aumento)=>{
+                                            Team.findByIdAndUpdate(params.equipo1, {$inc: {partidos: 1}}, {new: true}, (err, aumento)=>{
                                             })
                             
-                                            Team.findByIdAndUpdate(Equipo2, {$inc: {partidos: 1}}, {new: true}, (err, aumento)=>{
+                                            Team.findByIdAndUpdate(params.equipo2, {$inc: {partidos: 1}}, {new: true}, (err, aumento)=>{
                                             })
                             
-                                            Team.findByIdAndUpdate(Equipo1, {$inc: {golesDiferencia: diferencia1}}, {new: true}, (err, aumento)=>{
+                                            Team.findByIdAndUpdate(params.equipo1, {$inc: {golesDiferencia: diferencia1}}, {new: true}, (err, aumento)=>{
                                             })
                             
-                                            Team.findByIdAndUpdate(Equipo2, {$inc: {golesDiferencia: diferencia2}}, {new: true}, (err, aumento)=>{
+                                            Team.findByIdAndUpdate(params.equipo2, {$inc: {golesDiferencia: diferencia2}}, {new: true}, (err, aumento)=>{
                                             })
                             
-                                            Team.findByIdAndUpdate(Equipo1, {$inc: {puntos: puntos1}}, {new: true}, (err, aumento)=>{
+                                            Team.findByIdAndUpdate(params.equipo1, {$inc: {puntos: puntos1}}, {new: true}, (err, aumento)=>{
                                             })
                             
-                                            Team.findByIdAndUpdate(Equipo2, {$inc: {puntos: puntos2}}, {new: true}, (err, aumento)=>{
+                                            Team.findByIdAndUpdate(params.equipo2, {$inc: {puntos: puntos2}}, {new: true}, (err, aumento)=>{
                                             })
                             
                                             res.send({message: 'Marcador añadido', marcadorSaved})
@@ -137,7 +140,7 @@ function setMarcador(req, res){
                             }else{
                                 res.status(500).send({message: 'No se encontro la liga'})
                             }
-                        })
+                        }})
                         
                     }}else{
                         res.send({message: 'Ingrese datos completos'})
