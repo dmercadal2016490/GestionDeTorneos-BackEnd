@@ -62,7 +62,7 @@ function setMarcador(req, res){
                             res.status(500).send({message: 'Ingrese datos mayores o iguales a 0. Jornadas no deben ser mayores a 9'})
                         } else{
                             Liga.findById(LigaTeam, (err, ligaFind)=>{
-                            if(params.equipo1 = params.equipo2){
+                            if(params.equipo1 == params.equipo2){
                             res.status(500).send({message: 'Los dos equipos no pueden ser iguales.'})
                             }else{
                             if(err){
