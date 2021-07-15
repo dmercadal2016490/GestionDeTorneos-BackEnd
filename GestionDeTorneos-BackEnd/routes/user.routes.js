@@ -15,7 +15,7 @@ api.post('/login', userController.login);
 api.post('/saveUser/:idU', [mdAuth.ensureAuth, mdAuth.ensureAuthAdmin] ,userController.saveUser)
 api.put('/updateUser/:idU', mdAuth.ensureAuth, userController.updateUser)
 api.put('/deleteUser/:idU', mdAuth.ensureAuth, userController.deleteUser)
-api.get('/getUsers', [mdAuth.ensureAuth, mdAuth.ensureAuthAdmin], userController.getUsers)
+api.get('/getUsers', userController.getUsers)
 api.get('/getLigas/:id', [mdAuth.ensureAuth], userController.getLigas)
 
 //image
@@ -23,7 +23,7 @@ api.put('/:id/uploadImage', [mdAuth.ensureAuth, upload], userController.uploadIm
 api.get('/getImage/:fileName', [upload], userController.getImage);
 
 //admin
-api.put('/adminDeleteUser', userController.adminDeleteUser);
-api.put('/adminUpdateUser', userController.adminUpdateUser);
+api.put('/adminDeleteUser/:idU', userController.adminDeleteUser);
+api.put('/adminUpdateUser/:idU', userController.adminUpdateUser);
 
 module.exports = api;
