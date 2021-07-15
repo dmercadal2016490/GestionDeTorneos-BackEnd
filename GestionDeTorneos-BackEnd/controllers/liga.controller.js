@@ -224,6 +224,70 @@ function getImageLiga(req, res){
     })
 }
 
+function updateLigaAdmin(req, res){
+    let ligaId = req.params.idL
+    let update = req.body;
+    let userId = req.params.idU
+
+    User.findById(userId, (err, userFind)=>{
+        if(err){
+            return res.status(500).send({message: 'Error general'})
+        }else if(userFind){
+            Liga.findById(ligaId, (err, ligaFind)=>{
+                if(err){
+                    res.status(500).send({message: 'Error general'})
+                }else if(ligaFind){
+                    User.findOne({_id: userId, ligas: ligaId}, (err, userFind)=>{
+                        if(err){
+                            return res.status(500).send({message: 'Error general'})
+                        }else if(userFind){
+                                Liga.findByIdAndUpdate(ligaId, update,{new: true}, (err, ligaUpdated)=>{
+                                    if(err){
+                                        return res.status(500).send({message: 'Error general'})
+                                    }else if(ligaUpdated){
+                                        return res.send({message: 'Liga actualizada: ', ligaUpdated})
+                                    }else{
+                                        return res.send({message: 'Liga no actualizada'})
+                                    }
+                                }).populate('ligas')
+                        }else{
+                            return res.status(404).send({message: 'Usuario no encontrado'})
+                        }
+                    })
+                }else{
+                    return res.status(404).send({message: 'No se econtró la liga'})
+                }
+            })
+        }else{
+            return res.status(404).send({message: 'Usuario no encontrado'})
+        }
+    })
+}
+
+function deleteLigaAdmin(req, res){
+    let userId = req.params.idU;
+    let ligaId = req.params.idL;
+
+        User.findByIdAndUpdate({_id: userId, ligas: ligaId},
+            {$pull:{ligas: ligaId}}, {new: true}, (err, ligaPull)=>{
+                if(err){
+                    return res.status(500).send({message: 'Error general'})
+                }else if(ligaPull){
+                    Liga.findOneAndRemove(ligaId, (err, ligaRemoved)=>{
+                        if(err){
+                            return res.status(500).send({message: 'Error general'})
+                        }else if(ligaRemoved){
+                            return res.send({message: 'Liga eliminada', ligaPull})
+                        }else{
+                            return res.send({message: 'No se eliminó la liga'})
+                        }
+                    })
+                }else{
+                    return res.status(500).send({message: 'No se pudo eliminar la liga'})
+                }
+        }).populate('ligas')
+}
+
 module.exports = {
     createLiga,
     verTeams,
@@ -231,4 +295,6 @@ module.exports = {
     deleteLiga,
     uploadLigaImage,
     getImageLiga,
+    updateLigaAdmin,
+    deleteLigaAdmin
 }

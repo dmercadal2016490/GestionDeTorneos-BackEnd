@@ -23,7 +23,7 @@ api.put('/:id/uploadImage', [mdAuth.ensureAuth, upload], userController.uploadIm
 api.get('/getImage/:fileName', [upload], userController.getImage);
 
 //admin
-api.put('/adminDeleteUser', userController.adminDeleteUser);
-api.put('/adminUpdateUser', userController.adminUpdateUser);
+api.delete('/adminDeleteUser/:idU', userController.adminDeleteUser);
+api.put('/adminUpdateUser/:idU', userController.adminUpdateUser);
 
 module.exports = api;

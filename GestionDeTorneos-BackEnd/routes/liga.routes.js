@@ -14,5 +14,7 @@ api.put('/:idU/updateLiga/:idL', mdAuth.ensureAuth, ligaController.updateLiga)
 api.put('/:idU/deleteLiga/:idL', mdAuth.ensureAuth, ligaController.deleteLiga)
 api.put('/:idU/uploadLigaImage/:idL',[mdAuth.ensureAuth ,upload], ligaController.uploadLigaImage)
 api.get('/getImageLiga/:fileName', [upload], ligaController.getImageLiga)
+api.put('/:idU/updateLigaAdmin/:idL', mdAuth.ensureAuth, ligaController.updateLigaAdmin)
+api.put('/:idU/deleteLigaAdmin/:idL', ligaController.deleteLigaAdmin)
 
 module.exports = api;
