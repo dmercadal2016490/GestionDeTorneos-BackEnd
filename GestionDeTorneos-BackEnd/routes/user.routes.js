@@ -22,12 +22,8 @@ api.get('/getLigas/:id', [mdAuth.ensureAuth], userController.getLigas)
 api.put('/:id/uploadImage', [mdAuth.ensureAuth, upload], userController.uploadImage);
 api.get('/getImage/:fileName', [upload], userController.getImage);
 
-//admin
-<<<<<<< HEAD
+//administrador
 api.delete('/adminDeleteUser/:idU', userController.adminDeleteUser);
-=======
-api.put('/adminDeleteUser/:idU', userController.adminDeleteUser);
->>>>>>> master
 api.put('/adminUpdateUser/:idU', userController.adminUpdateUser);
 
 module.exports = api;
